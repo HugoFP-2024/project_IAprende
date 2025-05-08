@@ -48,7 +48,8 @@ class LoginScreen extends StatelessWidget {
             child: Column(
               children: [
                 ElevatedButton(
-                  onPressed: () => _signInWithGoogle(context),
+                  // onPressed: () => _signInWithGoogle(context),
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/chat'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
@@ -87,7 +88,8 @@ class LoginScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextButton(
-                  onPressed: () => _navigateToSignIn(context),
+                  // onPressed: () => _navigateToSignIn(context),
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/emaillogin'),
                   child: const Text(
                     'Já tenho uma conta',
                     style: TextStyle(

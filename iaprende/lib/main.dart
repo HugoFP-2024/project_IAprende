@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:iaprende/chat_page.dart';
+import 'package:iaprende/email_login_page.dart';
 import 'package:iaprende/register_page.dart';
 import 'login_screen.dart';
 
@@ -22,6 +24,8 @@ class MyApp extends StatelessWidget {
       routes: {
         "/login":(context) => LoginScreen(),
         "/register":(context) => RegisterPage(),
+        "/emaillogin":(context) => EmailLogin(),
+        "/chat":(context) => ChatPage()
       },
     );
   }
