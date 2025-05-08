@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'google_button.dart';
+// import 'google_button.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -106,15 +106,5 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  void _signInWithGoogle(BuildContext context) {
-    // Implementar autenticação com Google
-  }
 
-  void _registerWithEmail(BuildContext context) {
-    // Navegar para tela de cadastro
-  }
-
-  void _navigateToSignIn(BuildContext context) {
-    // Navegar para tela de login
-  }
 }
