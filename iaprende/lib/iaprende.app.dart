@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iaprende/pages/chat.page.dart';
 
 class IAprendeApp extends StatelessWidget {
   
@@ -7,10 +8,9 @@ class IAprendeApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
-        "/login":(context) => LoginPage(), 
         "/chat":(context) => ChatPage(),
       },
-      initialRoute: "/login",
+      initialRoute: "/chat",
     );
   }
 }
