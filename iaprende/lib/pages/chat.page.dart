@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
@@ -13,6 +11,8 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       backgroundColor: Color(0xFFF5F2D0),
       appBar: AppBar(
+        shadowColor: Colors.black,
+        elevation: 6.0,
         title: Text("IAprende", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Color(0xFF007DA6),
@@ -45,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
             )),
           Container(
             decoration: BoxDecoration(
-              color: Color(0xFF007DA6),
+              color: Colors.black,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               boxShadow: [
                 BoxShadow(
@@ -74,12 +74,12 @@ class _ChatPageState extends State<ChatPage> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
+                          borderSide: BorderSide(color: Color(0xFFF5F2D0)),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: Color(0xFFF5F2D0),
+                            color: Color(0xFF007DA6),
                             width: 2.0,
                           ),
                           borderRadius: BorderRadius.circular(10),
