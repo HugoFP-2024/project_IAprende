@@ -32,7 +32,7 @@ class _ChatPageState extends State<ChatPage> {
             itemBuilder:
                 (context) => [
                   PopupMenuItem(child: Text("Configurações")),
-                  PopupMenuItem(child: Text("Sair")),
+                  PopupMenuItem(child: Text("Sair"), value: Navigator.pushNamed(context, "/login",),),
                 ],
           ),
         ],
@@ -40,7 +40,12 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: [
           Flexible(child: ListView(children: [
-
+              ListTile( 
+                  leading: CircleAvatar(),
+                  title: Text("EsSTRANGULADOR FATECANO"),
+                  subtitle: Text("vem aqui na fatec....."),
+                  trailing: Text("10/05"),
+                ),
               ],
             )),
           Container(

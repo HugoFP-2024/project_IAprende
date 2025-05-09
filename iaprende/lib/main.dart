@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:iaprende/iaprende.app.dart';
-import 'package:iaprende/chat_page.dart';
+import 'package:iaprende/chat.page.dart';
+import 'package:iaprende/chat.page.dart';
 import 'package:iaprende/email_login_page.dart';
 import 'package:iaprende/register_page.dart';
 import 'login_screen.dart';
 
 void main() {
-  runApp(const IAprendeApp());
+  runApp(IAprendeApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class IAprendeApp extends StatelessWidget {
+  const IAprendeApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'App de Estudos',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         "/emaillogin":(context) => EmailLogin(),
         "/chat":(context) => ChatPage()
       },
+      initialRoute: "/login",
     );
   }
 
