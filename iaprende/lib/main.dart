@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:iaprende/iaprende.app.dart';
 import 'package:iaprende/chat_page.dart';
 import 'package:iaprende/email_login_page.dart';
 import 'package:iaprende/register_page.dart';
 import 'login_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const IAprendeApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,4 +30,5 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+
 }
