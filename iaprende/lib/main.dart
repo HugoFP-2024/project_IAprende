@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iaprende/chat.page.dart';
 import 'package:iaprende/chat.page.dart';
 import 'package:iaprende/email_login_page.dart';
+import 'package:iaprende/quizz_page.dart';
 import 'package:iaprende/register_page.dart';
 import 'login_screen.dart';
 
@@ -27,7 +28,8 @@ class IAprendeApp extends StatelessWidget {
         "/login":(context) => LoginScreen(),
         "/register":(context) => RegisterPage(),
         "/emaillogin":(context) => EmailLogin(),
-        "/chat":(context) => ChatPage()
+        "/chat":(context) => ChatPage(),
+        "/quizz":(context) => QuizzPage()
       },
       initialRoute: "/login",
     );

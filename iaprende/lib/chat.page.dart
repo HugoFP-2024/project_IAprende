@@ -31,8 +31,8 @@ class _ChatPageState extends State<ChatPage> {
             ),
             itemBuilder:
                 (context) => [
-                  PopupMenuItem(child: Text("Configurações")),
-                  PopupMenuItem(child: Text("Sair"), value: Navigator.pushNamed(context, "/login",),),
+                  PopupMenuItem(child: ListTile(leading: Icon(Icons.settings), title: Text('Configurações'),),),
+                  PopupMenuItem(child:  ListTile(leading: Icon(Icons.logout), title: Text('Sair'),), onTap: ()=> Navigator.pushReplacementNamed(context, '/login'),),
                 ],
           ),
         ],
