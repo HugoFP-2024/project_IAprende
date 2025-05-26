@@ -21,19 +21,37 @@ class _ChatPageState extends State<ChatPage> {
           icon: Icon(Icons.menu, color: Colors.white),
         ),
         actions: [
-          PopupMenuButton(
-            tooltip: 'Menu',
-            icon: Icon(Icons.house, color: Colors.white),
-            borderRadius: BorderRadius.circular(20),
-            popUpAnimationStyle: AnimationStyle(
-              curve: Easing.emphasizedAccelerate,
-              duration: Duration(milliseconds: 800),
+          PopupMenuButton<String>(
+            tooltip: 'Menu Opções',
+            icon: Icon(Icons.more_vert, color: Colors.white), // Ícone mais comum para menu de opções
+            color: Color(0xFFF5F2D0), // Cor de fundo do popup
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
             ),
-            itemBuilder:
-                (context) => [
-                  PopupMenuItem(child: ListTile(leading: Icon(Icons.settings), title: Text('Configurações'),),),
-                  PopupMenuItem(child:  ListTile(leading: Icon(Icons.logout), title: Text('Sair'),), onTap: ()=> Navigator.pushReplacementNamed(context, '/login'),),
-                ],
+            offset: Offset(0, kToolbarHeight), // Para posicionar abaixo do AppBar
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'settings',
+                child: ListTile(
+                  leading: Icon(Icons.settings, color: Color(0xFF007DA6)),
+                  title: Text('Configurações', style: TextStyle(color: Color(0xFF333333))),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'logout',
+                child: ListTile(
+                  leading: Icon(Icons.logout, color: Color(0xFF007DA6)),
+                  title: Text('Sair', style: TextStyle(color: Color(0xFF333333))),
+                ),
+                onTap: () {
+                  // Adicionar um pequeno delay para o menu fechar antes de navegar
+                  Future.delayed(Duration(milliseconds: 100), () {
+                     Navigator.pushReplacementNamed(context, '/login');
+                     print("Sair selecionado - Navegar para /login (comentado)");
+                  });
+                },
+              ),
+            ],
           ),
         ],
       ),

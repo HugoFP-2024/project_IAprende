@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iaprende/chat.page.dart';
-import 'package:iaprende/chat.page.dart';
 import 'package:iaprende/email_login_page.dart';
 import 'package:iaprende/quizz_page.dart';
 import 'package:iaprende/register_page.dart';
