@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -6,6 +7,13 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+
+  final _auth = FirebaseAuth.instance;
+  
+  Future<void> _logout(BuildContext context) async{
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

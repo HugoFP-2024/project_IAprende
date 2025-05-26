@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EmailLogin extends StatelessWidget {
-  const EmailLogin({super.key});
+
+    final txtEmail = TextEditingController();
+    final txtSenha = TextEditingController();
+
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _login(BuildContext context) async {
+    try {
+      UserCredential credential = await _auth.signInWithEmailAndPassword(
+        email: txtEmail.text,
+        password: txtSenha.text,
+      );
+      Navigator.pushReplacementNamed(context, "/chat");
+    }
+    on FirebaseAuthException catch(ex) {
+      final snackBar = SnackBar(content: Text(ex.message!));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +57,7 @@ class EmailLogin extends StatelessWidget {
                     children: [
                       const SizedBox(height: 20),
                       TextField(
+                        controller: txtEmail,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.email, color: Colors.grey[600]),
@@ -53,6 +73,7 @@ class EmailLogin extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       TextField(
+                        controller: txtSenha,
                         obscureText: true,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.lock, color: Colors.grey[600]),
@@ -76,7 +97,7 @@ class EmailLogin extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.pushReplacementNamed(context, '/chat'),
+                  onPressed: () => _login(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF007DA6),
                     foregroundColor: Colors.white,
