@@ -14,8 +14,7 @@ class RegisterPage extends StatelessWidget {
       UserCredential credential = await _auth.createUserWithEmailAndPassword(
           email: txtEmail.text, 
           password: txtSenha.text
-        );
-      
+        );  
       await credential.user!.updateDisplayName(txtNome.text);
       Navigator.pushReplacementNamed(context, "/login");
     }
@@ -115,8 +114,7 @@ class RegisterPage extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () =>
-                    _register(context), 
+                  onPressed: () => _register(context), 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF007DA6),
                     foregroundColor: Colors.white,

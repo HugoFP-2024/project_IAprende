@@ -7,12 +7,13 @@ import 'package:iaprende/register_page.dart';
 import 'login_screen.dart';
 
 const firebaseConfig = FirebaseOptions(
-  apiKey: "AIzaSyAKCRtA68L8fssto3g4HHWl4atZrDND4bI", 
-  appId: "1:890617491537:web:721f886c66397ae7e00870", 
-  messagingSenderId: "890617491537", 
-  projectId: "iaprende-f6cf0",
-  authDomain: "iaprende-f6cf0.firebaseapp.com",
-  storageBucket: "iaprende-f6cf0.firebasestorage.app"
+  apiKey: "AIzaSyCFA3Uxf-HBKj6t8UmD_pLcX_RH3eRRYRo  ", 
+  appId: "1:1079924366614:web:b03cad92c1f7ac97bdc437", 
+  messagingSenderId: "1079924366614", 
+  projectId: "aprendaia-b64fd",
+  authDomain: "aprendaia-b64fd.firebaseapp.com",
+  storageBucket: "aprendaia-b64fd.firebasestorage.app",
+  measurementId: "G-KVTFSY9E8W"
 );
 
 void main() async {
@@ -34,7 +35,7 @@ class IAprendeApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const LoginScreen(),
+      home: LoginScreen(),
 
       routes: {
         "/login":(context) => LoginScreen(),

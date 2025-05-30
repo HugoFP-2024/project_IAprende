@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -9,9 +10,21 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
 
   final _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   
   Future<void> _logout(BuildContext context) async{
-
+    try{
+        await _auth.signOut();
+        await _googleSignIn.signOut();
+        Navigator.popAndPushNamed(context, '/login');        
+    }
+    catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erro ao sair da conta, tente novamente: ${e.toString()}")
+        ),
+      );
+    }
   }
 
   @override
@@ -48,7 +61,7 @@ class _ChatPageState extends State<ChatPage> {
             itemBuilder:
                 (context) => [
                   PopupMenuItem(child: Text("Configurações")),
-                  PopupMenuItem(child: Text("Sair"), onTap: () => Navigator.popAndPushNamed(context, "/login")),
+                  PopupMenuItem(child: Text("Sair"), onTap: () => _logout(context)),
                 ],
           ),
         ],

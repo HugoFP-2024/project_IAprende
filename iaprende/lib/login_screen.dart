@@ -1,9 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 // import 'google_button.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  Future<UserCredential> signInWithGoogle() async {
+    // Inicia o processo de login
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
+      throw Exception('Login cancelado pelo usuário');
+    }
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    // Cria uma credencial para o Firebase
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    // Faz o login no Firebase
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +51,6 @@ class LoginScreen extends StatelessWidget {
                         color: Color(0xFF007DA6),
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -49,8 +72,15 @@ class LoginScreen extends StatelessWidget {
             child: Column(
               children: [
                 ElevatedButton(
-                  // onPressed: () => _signInWithGoogle(context),
-                  onPressed: () => Navigator.pushReplacementNamed(context, '/chat'),
+                  onPressed: () async {
+    try {
+      UserCredential user = await signInWithGoogle();
+      print("Usuário logado: ${user.user?.displayName}");
+    } catch (e) {
+      print("Erro no login: $e");
+    }
+  },
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
