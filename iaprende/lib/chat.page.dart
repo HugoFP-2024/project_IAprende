@@ -9,7 +9,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
 
-  final _auth = FirebaseAuth.instance;
+  var scafoldKey = GlobalKey();  final _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   
   Future<void> _logout(BuildContext context) async{
@@ -31,24 +31,23 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF5F2D0),
-      drawer: Drawer(
-
-      ),
       appBar: AppBar(
         shadowColor: Colors.black,
         elevation: 6.0,
         title: Text("IAprende", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Color(0xFF007DA6),
-        leading: 
-          Builder(
-            builder: (context) {
-              return IconButton(
-                onPressed: () => Scaffold.of(context).openDrawer,
-                icon: Icon(Icons.menu, color: Colors.white),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () => Scaffold.of(context).openDrawer(), 
+              icon: Icon(
+                Icons.list, 
+                color: Colors.white
+              )
             );
-            }
-          ),
+          }
+        ),
         actions: [
           PopupMenuButton(
             tooltip: 'Menu',
@@ -65,6 +64,10 @@ class _ChatPageState extends State<ChatPage> {
                 ],
           ),
         ],
+      ),
+       drawer: Drawer(
+        child: Text('create drawer widget tree here'),
+
       ),
       body: Column(
         children: [
