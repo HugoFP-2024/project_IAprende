@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:iaprende/chat.page.dart';
+import 'package:iaprende/consts.dart';
 import 'package:iaprende/email_login_page.dart';
 import 'package:iaprende/quizz_page.dart';
 import 'package:iaprende/register_page.dart';
 import 'login_screen.dart';
 
 void main() {
+  Gemini.init(apiKey: GEMINI_API_KEY,);
   runApp(IAprendeApp());
 }
 

@@ -1,4 +1,6 @@
+import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -6,120 +8,148 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final Gemini gemini = Gemini.instance;
+
+  List<ChatMessage> messages = [];
+
+  final ChatUser currentUser = ChatUser(id: "0", firstName: "Francisco");
+  final ChatUser geminiUser = ChatUser(
+    id: "1",
+    firstName: "IAprende",
+    profileImage: "images/IAprende.png",
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F2D0),
+      backgroundColor: const Color(0xFFF5F2D0),
       appBar: AppBar(
         shadowColor: Colors.black,
         elevation: 6.0,
-        title: Text("IAprende", style: TextStyle(color: Colors.white)),
+        title: const Text("IAprende", style: TextStyle(color: Colors.white)),
         centerTitle: true,
-        backgroundColor: Color(0xFF007DA6),
+        backgroundColor: const Color(0xFF007DA6),
         leading: IconButton(
           onPressed: null,
-          icon: Icon(Icons.menu, color: Colors.white),
+          icon: const Icon(Icons.menu, color: Colors.white),
         ),
-        actions: [
-          PopupMenuButton<String>(
-            tooltip: 'Menu Opções',
-            icon: Icon(Icons.more_vert, color: Colors.white), // Ícone mais comum para menu de opções
-            color: Color(0xFFF5F2D0), // Cor de fundo do popup
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            offset: Offset(0, kToolbarHeight), // Para posicionar abaixo do AppBar
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'settings',
-                child: ListTile(
-                  leading: Icon(Icons.settings, color: Color(0xFF007DA6)),
-                  title: Text('Configurações', style: TextStyle(color: Color(0xFF333333))),
-                ),
-              ),
-              PopupMenuItem(
-                value: 'logout',
-                child: ListTile(
-                  leading: Icon(Icons.logout, color: Color(0xFF007DA6)),
-                  title: Text('Sair', style: TextStyle(color: Color(0xFF333333))),
-                ),
-                onTap: () {
-                  // Adicionar um pequeno delay para o menu fechar antes de navegar
-                  Future.delayed(Duration(milliseconds: 100), () {
-                     Navigator.pushReplacementNamed(context, '/login');
-                     print("Sair selecionado - Navegar para /login (comentado)");
-                  });
-                },
-              ),
-            ],
-          ),
-        ],
+        actions: [_buildPopupMenu(context)],
       ),
-      body: Column(
-        children: [
-          Flexible(child: ListView(children: [
-              ListTile( 
-                  leading: CircleAvatar(),
-                  title: Text("EsSTRANGULADOR FATECANO"),
-                  subtitle: Text("vem aqui na fatec....."),
-                  trailing: Text("10/05"),
-                ),
-              ],
-            )),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 6.0,
-                  spreadRadius: 0.0,
-                  offset: Offset(0, -1),
-                ),
-              ],
-            ),
-
-            padding: EdgeInsets.all(10),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: null,
-                  icon: Icon(Icons.add, color: Color(0xFFF5F2D0)),
-                ),
-                Expanded(
-                  child: Container(
-                    child: TextField(
-                      style: TextStyle(color: Colors.white),
-                      cursorColor: Colors.white,
-                      decoration: InputDecoration(
-                        suffixIcon: Icon(Icons.send, color: Colors.white),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFFF5F2D0)),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xFF007DA6),
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        labelText: 'Vamos aprender algo?',
-                        labelStyle: TextStyle(color: Colors.white),
-                        hintText: 'Exemplo: Me diga sobre astrofísica',
-                        hintStyle: TextStyle(color: Colors.grey[200]),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      body: _buildChat(),
     );
+  }
+
+  Widget _buildPopupMenu(BuildContext context) {
+    return PopupMenuButton<String>(
+      tooltip: 'Menu Opções',
+      icon: const Icon(Icons.more_vert, color: Colors.white),
+      color: const Color(0xFFF5F2D0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      offset: const Offset(0, kToolbarHeight),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 'settings',
+          child: ListTile(
+            leading: const Icon(Icons.settings, color: Color(0xFF007DA6)),
+            title: const Text('Configurações', style: TextStyle(color: Color(0xFF333333))),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'logout',
+          onTap: () {
+            Future.delayed(const Duration(milliseconds: 100), () {
+              Navigator.pushReplacementNamed(context, '/login');
+            });
+          },
+          child: ListTile(
+            leading: const Icon(Icons.logout, color: Color(0xFF007DA6)),
+            title: const Text('Sair', style: TextStyle(color: Color(0xFF333333))),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChat() {
+  return DashChat(
+    currentUser: currentUser,
+    onSend: _handleSend,
+    messages: messages,
+    inputOptions: InputOptions( 
+      alwaysShowSend: true,
+      cursorStyle: CursorStyle(color: Colors.black),
+      inputDecoration: InputDecoration(
+        hintText: "Digite sua dúvida",
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFFF5F2D0)),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Color(0xFF007DA6),
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        )
+      ),
+    ),
+    messageOptions: MessageOptions(
+      currentUserContainerColor: Color(0xFF007DA6),
+    )
+    );
+
+}
+
+  void _handleSend(ChatMessage userMessage) async {
+    // Adiciona mensagem do usuário
+    setState(() {
+      messages.insert(0, userMessage);
+    });
+
+    final typingMessage = ChatMessage(
+      user: geminiUser,
+      createdAt: DateTime.now(),
+      text: "Digitando...",
+    );
+
+    setState(() {
+      messages.insert(0, typingMessage);
+    });
+
+    try {
+      String question = userMessage.text;
+      String fullResponse = "";
+
+      gemini.promptStream(parts: [Part.text(question)]).listen((event) {
+        if (event == null || event.content == null || event.content!.parts == null) {
+          return;
+        }   
+        final chunk = event.content!.parts!.whereType<TextPart>().map((p) => p.text).join();        
+        fullResponse += chunk;
+
+        setState(() {
+          messages[0] = ChatMessage(
+            user: geminiUser,
+            createdAt: typingMessage.createdAt,
+            text: fullResponse.trim(),
+          );
+        });
+      });
+    } catch (e) {
+      print("Erro ao chamar Gemini: $e");
+
+      setState(() {
+        messages[0] = ChatMessage(
+          user: geminiUser,
+          createdAt: DateTime.now(),
+          text: "Erro inesperado: ${e.toString()}",
+        );
+      });
+    }
   }
 }
