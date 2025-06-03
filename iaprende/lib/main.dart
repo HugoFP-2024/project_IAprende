@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iaprende/chat.page.dart';
 import 'package:iaprende/email_login_page.dart';
 import 'package:iaprende/register_page.dart';
+import "package:iaprende/recover.page.dart";
 import 'login_screen.dart';
 
 const firebaseConfig = FirebaseOptions(
@@ -41,7 +42,8 @@ class IAprendeApp extends StatelessWidget {
         "/login":(context) => LoginScreen(),
         "/register":(context) => RegisterPage(),
         "/emaillogin":(context) => EmailLogin(),
-        "/chat":(context) => ChatPage()
+        "/chat":(context) => ChatPage(),
+        "/recovery":(context) => RecoveryPage(),
       },
       initialRoute: _auth.currentUser == null ? "login" : "chat",
     );

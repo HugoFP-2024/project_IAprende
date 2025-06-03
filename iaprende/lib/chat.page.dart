@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -10,12 +9,10 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
 
   var scafoldKey = GlobalKey();  final _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
   
   Future<void> _logout(BuildContext context) async{
     try{
         await _auth.signOut();
-        await _googleSignIn.signOut();
         Navigator.popAndPushNamed(context, '/login');        
     }
     catch (e) {
