@@ -1,7 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatelessWidget {
-  const RegisterPage({super.key});
+
+  final txtNome = TextEditingController();
+  final txtEmail = TextEditingController();
+  final txtSenha = TextEditingController();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _register(BuildContext context) async {
+    try {
+      UserCredential credential = await _auth.createUserWithEmailAndPassword(
+          email: txtEmail.text, 
+          password: txtSenha.text
+        );  
+      await credential.user!.updateDisplayName(txtNome.text);
+      Navigator.pushReplacementNamed(context, "/login");
+    }
+
+    on FirebaseAuthException catch(ex) {
+      final snackBar = SnackBar(content: Text(ex.message!));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +59,7 @@ class RegisterPage extends StatelessWidget {
                   child: Column(
                     children: [
                       TextField(
+                        controller: txtNome,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.person, color: Colors.grey[600]),
                           border: OutlineInputBorder(
@@ -51,6 +74,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       TextField(
+                        controller: txtEmail,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.email, color: Colors.grey[600]),
@@ -66,6 +90,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       TextField(
+                        controller: txtSenha,
                         obscureText: true,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.lock, color: Colors.grey[600]),
@@ -89,7 +114,7 @@ class RegisterPage extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.pushReplacementNamed(context, "/login"),
+                  onPressed: () => _register(context), 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF007DA6),
                     foregroundColor: Colors.white,

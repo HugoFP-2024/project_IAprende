@@ -1,11 +1,11 @@
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:iaprende/consts.dart';
 import 'package:iaprende/quizz_page.dart';
-
 
 class ChatPage extends StatefulWidget {
   @override
@@ -13,7 +13,23 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+
   final Gemini gemini = Gemini.instance;
+  final _auth = FirebaseAuth.instance;
+  
+  Future<void> _logout(BuildContext context) async{
+    try{
+        await _auth.signOut();
+        Navigator.popAndPushNamed(context, '/login');        
+    }
+    catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erro ao sair da conta, tente novamente: ${e.toString()}")
+        ),
+      );
+    }
+  }
 
   List<ChatMessage> messages = [];
 
@@ -34,11 +50,22 @@ class _ChatPageState extends State<ChatPage> {
         title: const Text("IAprende", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: const Color(0xFF007DA6),
-        leading: IconButton(
-          onPressed: null,
-          icon: const Icon(Icons.menu, color: Colors.white),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () => Scaffold.of(context).openDrawer(), 
+              icon: Icon(
+                Icons.list, 
+                color: Colors.white
+              )
+            );
+          }
         ),
         actions: [_buildPopupMenu(context)],
+      ),
+      drawer: Drawer(
+        child: Text('create drawer widget tree here'),
+
       ),
       body: Column( 
         children:[ Expanded(child: _buildChat()),
@@ -64,10 +91,10 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
         PopupMenuItem(
-          value: 'logout',
+          value: 'Sair',
           onTap: () {
             Future.delayed(const Duration(milliseconds: 100), () {
-              Navigator.pushReplacementNamed(context, '/login');
+              _logout(context),
             });
           },
           child: ListTile(
