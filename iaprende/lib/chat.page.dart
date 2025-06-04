@@ -92,10 +92,8 @@ class _ChatPageState extends State<ChatPage> {
         ),
         PopupMenuItem(
           value: 'Sair',
-          onTap: () {
-            Future.delayed(const Duration(milliseconds: 100), () {
-              _logout(context),
-            });
+          onTap: () => {
+            _logout(context)
           },
           child: ListTile(
             leading: const Icon(Icons.logout, color: Color(0xFF007DA6)),
