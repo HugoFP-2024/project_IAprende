@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:iaprende/chat.page.dart';
+import 'package:iaprende/consts.dart';
 import 'package:iaprende/email_login_page.dart';
+import 'package:iaprende/quizz_page.dart';
 import 'package:iaprende/register_page.dart';
 import "package:iaprende/recover.page.dart";
 import 'login_screen.dart';
@@ -18,6 +21,7 @@ const firebaseConfig = FirebaseOptions(
 );
 
 void main() async {
+  Gemini.init(apiKey: GEMINI_API_KEY,);
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: firebaseConfig);
   runApp(IAprendeApp());
