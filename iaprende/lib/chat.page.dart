@@ -93,9 +93,7 @@ class _ChatPageState extends State<ChatPage> {
         PopupMenuItem(
           value: 'Sair',
           onTap: () {
-            Future.delayed(const Duration(milliseconds: 100), () {
-              _logout(context),
-            });
+              _logout(context);
           },
           child: ListTile(
             leading: const Icon(Icons.logout, color: Color(0xFF007DA6)),
@@ -141,7 +139,7 @@ class _ChatPageState extends State<ChatPage> {
 void _startQuiz() async {
   // Pega a última mensagem enviada pelo Gemini (IAprende)
   final lastGeminiMessage = messages
-      .where((msg) => msg.user == geminiUser && msg.text.isNotEmpty).last;
+      .where((msg) => msg.user == geminiUser && msg.text.isNotEmpty).first;
 
   final prompt = lastGeminiMessage.text;
 
