@@ -20,6 +20,8 @@ class QuizzPage extends StatefulWidget {
 
 class _QuizzPageState extends State<QuizzPage> {
   // Dados estáticos para o quiz
+
+
   final List<StaticQuestion> _quizData = [
     StaticQuestion(
       questionText: "1. Qual a capital da França?",

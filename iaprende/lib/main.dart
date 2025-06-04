@@ -31,7 +31,7 @@ class IAprendeApp extends StatelessWidget {
         "/register":(context) => RegisterPage(),
         "/emaillogin":(context) => EmailLogin(),
         "/chat":(context) => ChatPage(),
-        "/quizz":(context) => QuizzPage()
+
       },
       initialRoute: "/login",
     );

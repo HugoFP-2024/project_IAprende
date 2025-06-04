@@ -1,6 +1,11 @@
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:iaprende/consts.dart';
+import 'package:iaprende/quizz_page.dart';
+
 
 class ChatPage extends StatefulWidget {
   @override
@@ -35,7 +40,11 @@ class _ChatPageState extends State<ChatPage> {
         ),
         actions: [_buildPopupMenu(context)],
       ),
-      body: _buildChat(),
+      body: Column( 
+        children:[ Expanded(child: _buildChat()),
+                   _buildQuizButton(),
+        ],
+      ),
     );
   }
 
@@ -70,6 +79,86 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+// ESSE CARA AQUI É O BOTÃO DO QUIZZ!!
+  Widget _buildQuizButton() {
+  bool isEnabled = messages.any((msg) => 
+      msg.user == geminiUser && 
+      msg.text.isNotEmpty && 
+      msg.text != "Digitando...");
+
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    decoration: BoxDecoration(
+      color: const Color(0xFFF5F2D0),
+      border: Border(top: BorderSide(color: Colors.grey.shade300)),
+    ),
+    child: ElevatedButton( 
+      onPressed: isEnabled ? _startQuiz : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF007DA6),
+        foregroundColor: Colors.white,
+        minimumSize: const Size(double.infinity, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25),
+        ),
+      ),
+      child: const Text(
+        "TENTAR QUIZ", 
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
+      ),
+    ),
+  );
+}
+
+// ESSA É A FUNÇÃO EXECUTADA QUANDO O BOTÃO QUIZZ É CLICADO
+void _startQuiz() async {
+  // Pega a última mensagem enviada pelo Gemini (IAprende)
+  final lastGeminiMessage = messages
+      .where((msg) => msg.user == geminiUser && msg.text.isNotEmpty).last;
+
+  final prompt = lastGeminiMessage.text;
+
+  final url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY';
+
+  final requestBody = {
+    "contents": [
+      {
+        "parts": [
+          {
+            "text":
+            "Crie um quiz com 5 perguntas de múltipla escolha com 4 alternativas, com base no seguinte conteúdo:\n\n$prompt\n\nFormate a saída EXCLUSIVAMENTE neste JSON:\n\n{\n  \"quiz\": [\n    {\n      \"question\": \"...\",\n      \"options\": [\"...\", \"...\", \"...\", \"...\"],\n      \"answer_index\": ...\n    }\n  ]\n}"          }
+        ]
+      }
+    ]
+  };
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(requestBody),
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      final generatedText = json['candidates'][0]['content']['parts'][0]['text'];
+
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => QuizzPage(quizzData: generatedText),),
+      // );
+      // Imprime no console o quiz gerado
+      print("===== QUIZ GERADO PELO GEMINI =====");
+      print(generatedText);
+    } else {
+      print("Erro na resposta do Gemini: ${response.statusCode}");
+      print("Corpo da resposta: ${response.body}");
+    }
+  } catch (e) {
+    print("Erro ao fazer a requisição ao Gemini: $e");
+  }
+}
+
+//ESSE CARA AQUI É O DASH_CHAT_2
   Widget _buildChat() {
   return DashChat(
     currentUser: currentUser,
@@ -105,6 +194,7 @@ class _ChatPageState extends State<ChatPage> {
 
 }
 
+// ESSE CARA AQUI É A FUNÇÃO QUANDO A MENSAGEM É ENVIADA NO CHAT
   void _handleSend(ChatMessage userMessage) async {
     // Adiciona mensagem do usuário
     setState(() {
