@@ -139,7 +139,7 @@ class _ChatPageState extends State<ChatPage> {
 void _startQuiz() async {
   // Pega a última mensagem enviada pelo Gemini (IAprende)
   final lastGeminiMessage = messages
-      .where((msg) => msg.user == geminiUser && msg.text.isNotEmpty).last;
+      .where((msg) => msg.user == geminiUser && msg.text.isNotEmpty).first;
 
   final prompt = lastGeminiMessage.text;
 
