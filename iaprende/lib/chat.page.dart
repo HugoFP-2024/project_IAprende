@@ -33,7 +33,7 @@ class _ChatPageState extends State<ChatPage> {
 
   List<ChatMessage> messages = [];
 
-  final ChatUser currentUser = ChatUser(id: "0", firstName: "Francisco");
+  final ChatUser currentUser = ChatUser(id: FirebaseAuth.instance.currentUser!.uid, firstName: "Francisco");
   final ChatUser geminiUser = ChatUser(
     id: "1",
     firstName: "IAprende",
