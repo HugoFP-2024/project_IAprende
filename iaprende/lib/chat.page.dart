@@ -1,6 +1,7 @@
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -15,8 +16,8 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
 
   final Gemini gemini = Gemini.instance;
-  final _auth = FirebaseAuth.instance;
-  
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   Future<void> _logout(BuildContext context) async{
     try{
         await _auth.signOut();
@@ -32,8 +33,30 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   List<ChatMessage> messages = [];
+  
+  //PARTE RESPONSÁVEL POR PEGAR OS DADOS DO USUÁRIO LOGADO MY FRIEND 
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUser();
+  }
 
-  final ChatUser currentUser = ChatUser(id: "0", firstName: "Francisco");
+  void _loadCurrentUser() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      setState(() {
+        currentUser = ChatUser(
+          id: user.uid,
+          firstName: user.email ?? "Usuário",
+          profileImage: null,
+        );
+        // print(user);
+      });
+    }
+  }
+
+  ChatUser? currentUser;
   final ChatUser geminiUser = ChatUser(
     id: "1",
     firstName: "IAprende",
@@ -135,6 +158,8 @@ class _ChatPageState extends State<ChatPage> {
   );
 }
 
+
+
 // ESSA É A FUNÇÃO EXECUTADA QUANDO O BOTÃO QUIZZ É CLICADO
 void _startQuiz() async {
   // Pega a última mensagem enviada pelo Gemini (IAprende)
@@ -193,7 +218,7 @@ void _startQuiz() async {
 //ESSE CARA AQUI É O DASH_CHAT_2
   Widget _buildChat() {
   return DashChat(
-    currentUser: currentUser,
+    currentUser: currentUser!,
     onSend: _handleSend,
     messages: messages,
     inputOptions: InputOptions( 
@@ -227,11 +252,13 @@ void _startQuiz() async {
 }
 
 // ESSE CARA AQUI É A FUNÇÃO QUANDO A MENSAGEM É ENVIADA NO CHAT
-  void _handleSend(ChatMessage userMessage) async {
+  void _handleSend(ChatMessage userMessage) {
     // Adiciona mensagem do usuário
     setState(() {
       messages.insert(0, userMessage);
     });
+
+    _saveMessageToFirestore(userMessage);
 
     final typingMessage = ChatMessage(
       user: geminiUser,
@@ -247,20 +274,24 @@ void _startQuiz() async {
       String question = userMessage.text;
       String fullResponse = "";
 
-      gemini.promptStream(parts: [Part.text(question)]).listen((event) {
+      gemini.promptStream(parts: [Part.text(question)]).listen((event) async {
         if (event == null || event.content == null || event.content!.parts == null) {
           return;
         }   
         final chunk = event.content!.parts!.whereType<TextPart>().map((p) => p.text).join();        
         fullResponse += chunk;
 
+        final responseMessage = ChatMessage(
+          user: geminiUser,
+          createdAt: typingMessage.createdAt,
+          text: fullResponse.trim(),
+        );
+
         setState(() {
-          messages[0] = ChatMessage(
-            user: geminiUser,
-            createdAt: typingMessage.createdAt,
-            text: fullResponse.trim(),
-          );
+          messages[0] = responseMessage;
         });
+
+        await _saveMessageToFirestore(responseMessage);
       });
     } catch (e) {
       print("Erro ao chamar Gemini: $e");
@@ -273,5 +304,21 @@ void _startQuiz() async {
         );
       });
     }
+  }
+
+  // AQUI SALVA AS MENSAGENS DO CHAT MEU CHAPA UTILIZANDO O FIRESTORE 
+  Future<void> _saveMessageToFirestore(ChatMessage message) async {
+  await FirebaseFirestore.instance
+      .collection('chats')
+      .doc(_auth.currentUser!.uid)
+      .collection('messages')
+      .add({
+        'text': message.text,
+        'createdAt': message.createdAt,
+        'userId': message.user.id,
+        'userName': message.user.firstName,
+        'profileImage': message.user.profileImage,
+      });
+      print("entrou na função de salvar meu mano, se liga: $message");
   }
 }
