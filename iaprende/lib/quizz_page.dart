@@ -1,60 +1,53 @@
+
 import 'package:flutter/material.dart';
 
 // Modelo simples para representar uma pergunta e suas opções
 class StaticQuestion {
   final String questionText;
   final List<String> options;
-  final String? correctAnswer; // Opcional, não usado na visualização estática de seleção
-
+  final int correctAnswer;
+  
   StaticQuestion({
     required this.questionText,
     required this.options,
-    this.correctAnswer,
+    required this.correctAnswer,
   });
+
 }
 
 class QuizzPage extends StatefulWidget {
+  final List<dynamic> quizJson;
+  const QuizzPage({super.key, required this.quizJson});
   @override
   State<QuizzPage> createState() => _QuizzPageState();
 }
 
 class _QuizzPageState extends State<QuizzPage> {
-  // Dados estáticos para o quiz
-
-
-  final List<StaticQuestion> _quizData = [
-    StaticQuestion(
-      questionText: "1. Qual a capital da França?",
-      options: ["Berlim", "Madri", "Paris", "Lisboa"],
-      correctAnswer: "Paris",
-    ),
-    StaticQuestion(
-      questionText: "2. Qual o maior planeta do sistema solar?",
-      options: ["Terra", "Júpiter", "Marte", "Vênus"],
-      correctAnswer: "Júpiter",
-    ),
-    StaticQuestion(
-      questionText: "3. Quem escreveu 'Dom Quixote'?",
-      options: ["Machado de Assis", "Miguel de Cervantes", "Carlos Drummond de Andrade", "Fernando Pessoa"],
-      correctAnswer: "Miguel de Cervantes",
-    ),
-    StaticQuestion(
-      questionText: "4. Quantos lados tem um heptágono?",
-      options: ["5", "6", "7", "8"],
-      correctAnswer: "7",
-    ),
-    StaticQuestion(
-      questionText: "5. Em que ano o homem pisou na Lua pela primeira vez?",
-      options: ["1965", "1969", "1971", "1975"],
-      correctAnswer: "1969",
-    ),
-  ];
-
-  // Para guardar a opção selecionada para cada pergunta (index da pergunta -> opção selecionada)
-  // Usaremos o texto da opção como valor para simplicidade neste exemplo estático
+  //AQUI FAZ GUARDA AS INFORMAÇÕES DE CADA PERGUNTA COM SUAS ALTERNATIVAS
+  final List<StaticQuestion> _quizData = [];
+  // ESSE CARA AQUI GUARDA AS RESPOSTAS DO USUÁRIO
   final Map<int, String?> _selectedAnswers = {};
+  // SERVE PARA VALIDAR SE A RESPOSTA FOI ENVIADA
+  bool _respostasEnviadas = false;
+
 
   @override
+ 
+  void initState() {
+  super.initState();
+
+  // AQUI CONVERTE O JSON NA CLASSE CRIADA STATIC QUESTION
+  for (var item in widget.quizJson) {
+    _quizData.add(
+      StaticQuestion(
+        questionText: item['question'],
+        options: List<String>.from(item['options']),
+        correctAnswer: item['answer_index'],
+      ),
+    );
+  }
+}
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF5F2D0), // Creme claro
@@ -63,24 +56,22 @@ class _QuizzPageState extends State<QuizzPage> {
         elevation: 6.0,
         title: Text("Quizz", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         centerTitle: true,
-        backgroundColor: Color(0xFF007DA6), // Azul escuro
+        backgroundColor: Color(0xFF007DA6), 
         leading: IconButton(
-          // onPressed: null, // Mantido como null, conforme seu código original
           onPressed: () {
-            // Ação para o menu (ex: Scaffold.of(context).openDrawer())
-            print("Menu button pressed");
+            Navigator.pop(context);
           },
-          icon: Icon(Icons.menu, color: Colors.white),
+          icon: Icon(Icons.arrow_back_sharp, color: Colors.white),
         ),
         actions: [
           PopupMenuButton<String>(
             tooltip: 'Menu Opções',
-            icon: Icon(Icons.more_vert, color: Colors.white), // Ícone mais comum para menu de opções
-            color: Color(0xFFF5F2D0), // Cor de fundo do popup
+            icon: Icon(Icons.more_vert, color: Colors.white), 
+            color: Color(0xFFF5F2D0), 
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
-            offset: Offset(0, kToolbarHeight), // Para posicionar abaixo do AppBar
+            offset: Offset(0, kToolbarHeight), 
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'settings',
@@ -96,7 +87,6 @@ class _QuizzPageState extends State<QuizzPage> {
                   title: Text('Sair', style: TextStyle(color: Color(0xFF333333))),
                 ),
                 onTap: () {
-                  // Adicionar um pequeno delay para o menu fechar antes de navegar
                   Future.delayed(Duration(milliseconds: 100), () {
                      Navigator.pushReplacementNamed(context, '/login');
                      print("Sair selecionado - Navegar para /login (comentado)");
@@ -107,12 +97,12 @@ class _QuizzPageState extends State<QuizzPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView( // Permite rolagem se o conteúdo for maior que a tela
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Mapeia os dados estáticos para criar os cards de pergunta
+            // AQUI MAPEIA AS PERGUNTAS DA CLASSE STATIC PARA CRIAR OS CARDS
             ...List.generate(_quizData.length, (index) {
               StaticQuestion question = _quizData[index];
               return Card(
@@ -121,7 +111,7 @@ class _QuizzPageState extends State<QuizzPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
-                color: Colors.white, // Fundo do card
+                color: Colors.white, 
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -132,14 +122,18 @@ class _QuizzPageState extends State<QuizzPage> {
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF333333), // Cor escura para o texto da pergunta
+                          color: Color(0xFF333333), 
                         ),
                       ),
                       SizedBox(height: 12.0),
-                      // Mapeia as opções para criar RadioListTile
+                      // AQUI MAPEIA AS ALTERNATIVAS
                       ...question.options.map((option) {
                         return RadioListTile<String>(
-                          title: Text(option, style: TextStyle(color: Color(0xFF555555))),
+                          title: Text(option, 
+                          // ADICIONEI AQUI A FUNÇÃO PARA DEFINIR A COR DA ALTERNATIVA
+                          style:TextStyle(
+                            color: _getOptionColor(index, option) ?? Color(0xFF555555),
+                            fontWeight: _getOptionColor(index, option) != null ? FontWeight.bold : FontWeight.normal,)),
                           value: option,
                           groupValue: _selectedAnswers[index],
                           onChanged: (String? value) {
@@ -147,7 +141,7 @@ class _QuizzPageState extends State<QuizzPage> {
                               _selectedAnswers[index] = value;
                             });
                           },
-                          activeColor: Color(0xFF007DA6), // Cor do rádio selecionado
+                          activeColor: Color(0xFF007DA6), 
                           contentPadding: EdgeInsets.zero,
                         );
                       }).toList(),
@@ -159,20 +153,26 @@ class _QuizzPageState extends State<QuizzPage> {
             SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: () {
-                // Lógica para checar as respostas (não implementada neste exemplo estático)
-                print("Botão Enviar Pressionado!");
+                setState(() {
+                  _respostasEnviadas = true;
+                 });
                 print("Respostas selecionadas: $_selectedAnswers");
-                // Aqui você adicionaria a lógica para comparar com _quizData[index].correctAnswer
-                // e mostrar o resultado.
+                //COMEÇANDO VALIDAÇÃO AMIGÃO
+                int correct = 0;
+                for (int i = 0; i < _quizData.length; i++) {
+                  final selected = _selectedAnswers[i];
+                  final correctOption = _quizData[i].options[_quizData[i].correctAnswer];
+                  if (selected == correctOption) correct++;
+                }
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Respostas enviadas para verificação! (Simulação)'),
-                    backgroundColor: Color(0xFF007DA6),
+                    content: Text('Você acertou $correct de ${_quizData.length} questões.'),
+                    backgroundColor: Color.fromARGB(255, 0, 100, 133),
                   )
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF00C2A8), // Verde-azulado para o botão
+                backgroundColor: Color(0xFF007DA6), 
                 padding: EdgeInsets.symmetric(vertical: 16.0),
                 textStyle: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                 shape: RoundedRectangleBorder(
@@ -181,10 +181,29 @@ class _QuizzPageState extends State<QuizzPage> {
               ),
               child: Text("Enviar Respostas", style: TextStyle(color: Colors.white)),
             ),
-            SizedBox(height: 20.0), // Espaço extra no final
+            SizedBox(height: 20.0), 
           ],
         ),
       ),
     );
   }
+
+  Color? _getOptionColor(int questionIndex, String option) {
+    if (!_respostasEnviadas) return null;
+
+    final question = _quizData[questionIndex];
+    final selectedOption = _selectedAnswers[questionIndex];
+    final correctOption = question.options[question.correctAnswer];
+
+    if (option == selectedOption) {
+    if (selectedOption == correctOption) {
+      return Colors.green; // Correta selecionada
+    } else {
+      return Colors.red; // Errada selecionada
+    }
+  }
+    return null;
+  }
+
 }
+

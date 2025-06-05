@@ -37,7 +37,7 @@ class _ChatPageState extends State<ChatPage> {
   final ChatUser geminiUser = ChatUser(
     id: "1",
     firstName: "IAprende",
-    profileImage: "images/IAprende.png",
+    profileImage: "https://cdn-icons-png.flaticon.com/512/4712/4712109.png",
   );
 
   @override
@@ -167,13 +167,20 @@ void _startQuiz() async {
       final json = jsonDecode(response.body);
       final generatedText = json['candidates'][0]['content']['parts'][0]['text'];
 
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => QuizzPage(quizzData: generatedText),),
-      // );
+      final cleanedText = generatedText.toString().replaceAll("```json", "")
+      .replaceAll("```", "")
+      .trim();
+
+      final decodedQuizz = jsonDecode(cleanedText);
+
+      final List<dynamic> quizzList = decodedQuizz['quiz'];
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => QuizzPage(quizJson: quizzList),),
+      );
       // Imprime no console o quiz gerado
-      print("===== QUIZ GERADO PELO GEMINI =====");
-      print(generatedText);
+      // print("===== QUIZ GERADO PELO GEMINI =====");
+      // print(generatedText);
     } else {
       print("Erro na resposta do Gemini: ${response.statusCode}");
       print("Corpo da resposta: ${response.body}");
