@@ -33,7 +33,10 @@ class _ChatPageState extends State<ChatPage> {
 
   List<ChatMessage> messages = [];
 
-  final ChatUser currentUser = ChatUser(id: FirebaseAuth.instance.currentUser!.uid, firstName: "Francisco");
+  final ChatUser currentUser = ChatUser(
+    id: FirebaseAuth.instance.currentUser!.uid, 
+    firstName: FirebaseAuth.instance.currentUser.toString()
+  );
   final ChatUser geminiUser = ChatUser(
     id: "1",
     firstName: "IAprende",
@@ -85,6 +88,7 @@ class _ChatPageState extends State<ChatPage> {
       itemBuilder: (context) => [
         PopupMenuItem(
           value: 'settings',
+          onTap: () => null ,
           child: ListTile(
             leading: const Icon(Icons.settings, color: Color(0xFF007DA6)),
             title: const Text('Configurações', style: TextStyle(color: Color(0xFF333333))),
