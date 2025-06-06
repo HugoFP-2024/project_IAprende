@@ -6,7 +6,7 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:iaprende/consts.dart';
-import 'package:iaprende/quizz_page.dart';
+import 'package:iaprende/pages/quizz_page.dart';
 
 class ChatPage extends StatefulWidget {
   @override
