@@ -31,6 +31,40 @@ class IAprendeApp extends StatelessWidget {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;  
 
+  Route<dynamic> _animatedRoute(RouteSettings settings) {
+    WidgetBuilder builder;
+    switch (settings.name) {
+      case "/login":
+        builder = (context) => LoginScreen();
+        break;
+      case "/register":
+        builder = (context) => RegisterPage();
+        break;
+      case "/emaillogin":
+        builder = (context) => EmailLogin();
+        break;
+      case "/chat":
+        builder = (context) => ChatPage();
+        break;
+      case "/recovery":
+        builder = (context) => RecoveryPage();
+        break;
+      default:
+        builder = (context) => LoginScreen();
+    }
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => builder(context),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+      transitionDuration: Duration(milliseconds: 400),
+      settings: settings,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,16 +74,8 @@ class IAprendeApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginScreen(),
-
-      routes: {
-        "/login":(context) => LoginScreen(),
-        "/register":(context) => RegisterPage(),
-        "/emaillogin":(context) => EmailLogin(),
-        "/chat":(context) => ChatPage(),
-        "/recovery":(context) => RecoveryPage(),
-      },
-      initialRoute: _auth.currentUser == null ? "login" : "chat",
+      onGenerateRoute: _animatedRoute,
+      initialRoute: _auth.currentUser == null ? "/login" : "/chat",
     );
   }
 

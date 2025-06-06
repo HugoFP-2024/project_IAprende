@@ -48,7 +48,7 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         currentUser = ChatUser(
           id: user.uid,
-          firstName: user.email ?? "Usuário",
+          firstName: user.email.toString() ?? "Usuário",
           profileImage: null,
         );
         // print(user);
@@ -57,6 +57,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   ChatUser? currentUser;
+  
   final ChatUser geminiUser = ChatUser(
     id: "1",
     firstName: "IAprende",
@@ -108,6 +109,7 @@ class _ChatPageState extends State<ChatPage> {
       itemBuilder: (context) => [
         PopupMenuItem(
           value: 'settings',
+          onTap: () => null ,
           child: ListTile(
             leading: const Icon(Icons.settings, color: Color(0xFF007DA6)),
             title: const Text('Configurações', style: TextStyle(color: Color(0xFF333333))),
@@ -115,8 +117,8 @@ class _ChatPageState extends State<ChatPage> {
         ),
         PopupMenuItem(
           value: 'Sair',
-          onTap: () {
-              _logout(context);
+          onTap: () => {
+            _logout(context)
           },
           child: ListTile(
             leading: const Icon(Icons.logout, color: Color(0xFF007DA6)),
