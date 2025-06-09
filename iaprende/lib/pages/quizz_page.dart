@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 
+import 'chat_page.dart';
 import 'package:flutter/material.dart';
 
 // Modelo simples para representar uma pergunta e suas opções
@@ -30,7 +32,7 @@ class _QuizzPageState extends State<QuizzPage> {
   // SERVE PARA VALIDAR SE A RESPOSTA FOI ENVIADA
   bool _respostasEnviadas = false;
 
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
  
   void initState() {
@@ -87,10 +89,8 @@ class _QuizzPageState extends State<QuizzPage> {
                   title: Text('Sair', style: TextStyle(color: Color(0xFF333333))),
                 ),
                 onTap: () {
-                  Future.delayed(Duration(milliseconds: 100), () {
-                     Navigator.pushReplacementNamed(context, '/login');
-                     print("Sair selecionado - Navegar para /login (comentado)");
-                  });
+                  _auth.signOut();
+                  Navigator.popAndPushNamed(context, '/login');  
                 },
               ),
             ],
@@ -206,4 +206,5 @@ class _QuizzPageState extends State<QuizzPage> {
   }
 
 }
+
 

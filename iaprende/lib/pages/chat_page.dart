@@ -89,7 +89,6 @@ class _ChatPageState extends State<ChatPage> {
       ),
       drawer: Drawer(
         child: Text('create drawer widget tree here'),
-
       ),
       body: Column( 
         children:[ Expanded(child: _buildChat()),
