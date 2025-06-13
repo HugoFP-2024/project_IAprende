@@ -376,6 +376,7 @@ void _startQuiz() async {
       currentUser: currentUser!,
       onSend: _handleSend,
       messages: messages,
+
       inputOptions: InputOptions(
         alwaysShowSend: true,
         cursorStyle: CursorStyle(color: Colors.black),
