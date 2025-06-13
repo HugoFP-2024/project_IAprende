@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:iaprende/consts.dart';
 import 'package:iaprende/pages/quizz_page.dart';
 import 'dart:async';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 
 class ChatPage extends StatefulWidget {
@@ -41,6 +42,7 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     _loadCurrentUser();
+    _speech = stt.SpeechToText();
   }
 
   void _loadCurrentUser() async {
@@ -370,41 +372,96 @@ void _startQuiz() async {
 
 //ESSE CARA AQUI É O DASH_CHAT_2
   Widget _buildChat() {
-  return DashChat(
-    currentUser: currentUser!,
-    onSend: _handleSend,
-    messages: messages,
-    inputOptions: InputOptions( 
-      alwaysShowSend: true,
-      cursorStyle: CursorStyle(color: Colors.black),
-      inputDecoration: InputDecoration(
-        hintText: "Digite sua dúvida",
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFFF5F2D0)),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Color(0xFF007DA6),
-            width: 2.0,
+    return DashChat(
+      currentUser: currentUser!,
+      onSend: _handleSend,
+      messages: messages,
+
+      inputOptions: InputOptions(
+        alwaysShowSend: true,
+        cursorStyle: CursorStyle(color: Colors.black),
+        inputDecoration: InputDecoration(
+          hintText: "Digite sua dúvida",
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
-          borderRadius: BorderRadius.circular(10),
-        )
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFFF5F2D0)),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Color(0xFF007DA6),
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          // Troque GestureDetector por IconButton para melhor usabilidade
+          suffixIcon: IconButton(
+            icon: Icon(
+              _isListening ? Icons.mic : Icons.mic_none,
+              color: _isListening ? Color(0xFF007DA6) : Colors.grey[600],
+            ),
+            onPressed: () async {
+              if (_isListening) {
+                await _stopListening();
+              } else {
+                await _startListening();
+              }
+            },
+            tooltip: _isListening ? 'Parar gravação' : 'Falar',
+          ),
+        ),
+        textController: _inputController,
       ),
-    ),
-    messageOptions: MessageOptions(
-      currentUserContainerColor: Color(0xFF007DA6),
-    )
+      messageOptions: MessageOptions(
+        currentUserContainerColor: Color(0xFF007DA6),
+      ),
     );
+  }
 
-}
+  // Adicione estas variáveis como membros da classe
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  String _voiceInput = "";
+  final TextEditingController _inputController = TextEditingController();
 
-// ESSE CARA AQUI É A FUNÇÃO QUANDO A MENSAGEM É ENVIADA NO CHAT
+  Future<void> _startListening() async {
+    bool available = await _speech.initialize(
+      onStatus: (val) {
+        if (val == "done" || val == "notListening") {
+          setState(() => _isListening = false);
+        }
+      },
+      onError: (val) {
+        setState(() => _isListening = false);
+      },
+    );
+    if (available) {
+      setState(() => _isListening = true);
+      _speech.listen(
+        onResult: (val) {
+          setState(() {
+            _voiceInput = val.recognizedWords;
+            _inputController.text = _voiceInput;
+            _inputController.selection = TextSelection.fromPosition(
+              TextPosition(offset: _inputController.text.length),
+            );
+          });
+        },
+        localeId: 'pt_BR',
+      );
+    }
+  }
+
+  Future<void> _stopListening() async {
+    await _speech.stop();
+    setState(() => _isListening = false);
+  }
+
+  // ESSE CARA AQUI É A FUNÇÃO QUANDO A MENSAGEM É ENVIADA NO CHAT
   void _handleSend(ChatMessage userMessage) {
     setState(() {
       messages.insert(0, userMessage);
