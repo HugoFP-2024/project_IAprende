@@ -16,6 +16,9 @@ class RegisterPage extends StatelessWidget {
           password: txtSenha.text
         );  
       await credential.user!.updateDisplayName(txtNome.text);
+      final snackBar = SnackBar(content: Text("Conta criada! Realize seu login."));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
       Navigator.pushReplacementNamed(context, "/login");
     }
 

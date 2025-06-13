@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.iaprende"
-    compileSdk = 34 // ou use o valor mais recente suportado pelo seu Flutter
+    compileSdk = 35 // ou use o valor mais recente suportado pelo seu Flutter
 
     ndkVersion = flutter.ndkVersion
 
